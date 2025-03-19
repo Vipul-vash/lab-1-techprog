@@ -1,0 +1,124 @@
+КОД 
+
+
+#include <iostream>
+using namespace std;
+
+struct Node {
+    string name;
+    int number;
+    double value;
+    Node* next;
+
+    Node(string n, int num, double val) : name(n), number(num), value(val), next(nullptr) {}
+};
+
+class LinkedList {
+private:
+    Node* head;
+
+public:
+    LinkedList() : head(nullptr) {}
+
+    void addToStart(string name, int num, double val) {
+        Node* newNode = new Node(name, num, val);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    void addToEnd(string name, int num, double val) {
+        Node* newNode = new Node(name, num, val);
+        if (!head) {
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next) temp = temp->next;
+        temp->next = newNode;
+    }
+
+    void insertAfter(string target, string name, int num, double val) {
+        Node* temp = head;
+        while (temp && temp->name != target) temp = temp->next;
+        if (!temp) {
+            cout << "Элемент '" << target << "' не найден.\n";
+            return;
+        }
+        Node* newNode = new Node(name, num, val);
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+
+    void insertBefore(string target, string name, int num, double val) {
+        if (!head) return;
+        if (head->name == target) {
+            addToStart(name, num, val);
+            return;
+        }
+        Node* prev = nullptr;
+        Node* curr = head;
+        while (curr && curr->name != target) {
+            prev = curr;
+            curr = curr->next;
+        }
+        if (!curr) {
+            cout << "Элемент '" << target << "' не найден.\n";
+            return;
+        }
+        Node* newNode = new Node(name, num, val);
+        prev->next = newNode;
+        newNode->next = curr;
+    }
+
+    void deleteNode(string target) {
+        if (!head) return;
+        if (head->name == target) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+            return;
+        }
+        Node* prev = nullptr;
+        Node* curr = head;
+        while (curr && curr->name != target) {
+            prev = curr;
+            curr = curr->next;
+        }
+        if (!curr) {
+            cout << "Элемент '" << target << "' не найден.\n";
+            return;
+        }
+        prev->next = curr->next;
+        delete curr;
+    }
+
+    void displayList() {
+        Node* temp = head;
+        while (temp) {
+            cout << "Имя: " << temp->name 
+                 << ", Число: " << temp->number 
+                 << ", Значение: " << temp->value << endl;
+            temp = temp->next;
+        }
+        cout << "------------------------\n";
+    }
+};
+
+int main() {
+    LinkedList list;
+
+    list.addToStart("A", 1, 1.1);
+    list.addToEnd("C", 3, 3.3);
+    list.insertAfter("A", "B", 2, 2.2);
+    list.insertBefore("C", "D", 4, 4.4);
+    list.displayList(); // A -> B -> D -> C
+
+    list.deleteNode("D");
+    list.displayList(); // A -> B -> C
+
+    list.insertBefore("B", "E", 5, 5.5);
+    list.insertAfter("C", "F", 6, 6.6);
+    list.displayList(); // A -> E -> B -> C -> F
+
+    return 0;
+}

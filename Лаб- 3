@@ -1,0 +1,111 @@
+: Rectangle(topLeft, sideLength, sideLength) {}
+
+    void draw() const {
+        std::cout << "Drawing a square parallelogram with side length " << width
+                  << " and top left vertex at (" << vertices[0].first << ", "
+                  << vertices[0].second << ").\n";
+    }
+};
+
+class Parallelogram : public Shape {
+protected:
+    double sideA, sideB, angle;
+
+public:
+    Parallelogram(std::pair<double, double> vertex, double a, double b, double ang)
+        : sideA(a), sideB(b), angle(ang) {
+        double rad = angle * M_PI / 180.0;
+        vertices.push_back(vertex);
+        vertices.push_back({vertex.first + sideA, vertex.second});
+        vertices.push_back({vertex.first + sideA - sideB * cos(rad),
+                            vertex.second - sideB * sin(rad)});
+        vertices.push_back({vertex.first - sideB * cos(rad),
+                            vertex.second - sideB * sin(rad)});
+    }
+
+    void draw() const {
+        std::cout << "Drawing a parallelogram with vertices:\n";
+        for (const auto &vertex : vertices) {
+            std::cout << "(" << vertex.first << ", " << vertex.second << ")\n";
+        }
+    }
+};
+
+class Rhombus : public Shape {
+protected:
+    double sideLength, angle;
+
+public:
+    Rhombus(std::pair<double, double> vertex, double length, double ang)
+        : sideLength(length), angle(ang) {
+        double rad = angle * M_PI / 180.0;
+        vertices.push_back(vertex);
+        vertices.push_back({vertex.first + sideLength, vertex.second});
+        vertices.push_back({vertex.first + sideLength - sideLength * cos(rad),
+                            vertex.second - sideLength * sin(rad)});
+        vertices.push_back({vertex.first - sideLength * cos(rad),
+                            vertex.second - sideLength * sin(rad)});
+    }
+
+    void draw() const {
+        std::cout << "Drawing a rhombus with vertices:\n";
+        for (const auto &vertex : vertices) {
+            std::cout << "(" << vertex.first << ", " << vertex.second << ")\n";
+        }
+    }
+};
+
+// Shape transformation functions
+void rotateShape(Point &shape, double angle, double centerX = 0, double centerY = 0) {
+    shape.rotate(angle, centerX, centerY);
+}
+
+void reflectOverX(Point &shape) {
+    shape.reflectX();
+}
+
+void reflectOverY(Point &shape) {
+    shape.reflectY();
+}
+
+// Main program
+int main() {
+    Line line({0, 0}, {1, 1});
+    Square square({0, 0}, 2);
+    Rectangle rectangle({0, 0}, 3, 2);
+    SquareParallelogram squareParallelogram({0, 0}, 2);
+    Parallelogram parallelogram({0, 0}, 3, 2, 45);
+    Rhombus rhombus({0, 0}, 2, 60);
+
+    std::cout << "Original line:\n";
+    line.draw();
+    rotateShape(line, 45);
+    std::cout << "After rotation:\n";
+    line.draw();
+
+    std::cout << "\nOriginal square:\n";
+    square.draw();
+    reflectOverX(square);
+    std::cout << "After X reflection:\n";
+    square.draw();
+    reflectOverY(square);
+    std::cout << "After Y reflection:\n";
+    square.draw();
+
+    std::cout << "\nOriginal rectangle:\n";
+    rectangle.draw();
+    rotateShape(rectangle, 90, 1.5, -1);
+    std::cout << "After rotation around center:\n";
+    rectangle.draw();
+
+    std::cout << "\nOriginal parallelogram:\n";
+    parallelogram.draw();
+    rotateShape(parallelogram, 30);
+    std::cout << "After rotation:\n";
+    parallelogram.draw();
+    reflectOverX(parallelogram);
+    std::cout << "After X reflection:\n";
+    parallelogram.draw();
+
+    return 0;
+}
